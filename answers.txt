@@ -1,5 +1,5 @@
-Name:
-UCLA ID:
+Name: Jason Jiang
+UCLA ID: 604409327
 
 Collaborators:
 
@@ -8,7 +8,7 @@ Collaborators:
 Response to Exercise 1:
 
 The name of the scheduling algorithm is:
-
+Non premptive scheduling algorithm.
 
 (Exercise 2 is a coding exercise)
 
@@ -23,7 +23,7 @@ Average wait time for scheduling_algorithm 1:
 
 
 Exercise 4:
-
+s
 Did you complete Exercise 4A, Exercise 4B, or both for extra credit?
 
 
