@@ -127,7 +127,7 @@ start(void)
 	//   41 = p_priority algorithm (exercise 4.a)
 	//   42 = p_share algorithm (exercise 4.b)
 	//    7 = any algorithm that you may implement for exercise 7
-	scheduling_algorithm = 0;
+	scheduling_algorithm = 41;
 
 	// Switch to the first process.
 	run(&proc_array[1]);
@@ -186,7 +186,10 @@ interrupt(registers_t *reg)
 	case INT_SYS_USER2:
 		/* Your code here (if you want). */
 		run(current);
-
+	
+	case INT_PRIORITY_SET:
+		current->p_priority = reg->reg_eax;
+		run(current);
 	case INT_CLOCK:
 		// A clock interrupt occurred (so an application exhausted its
 		// time quantum).
@@ -220,6 +223,7 @@ schedule(void)
 {
 	pid_t pid = current->p_pid;
 	int j = 0;
+	int lowest_priority = 65535; //INT_MAX of 16 bit ints 
 	if (scheduling_algorithm == 0)
 		while (1) {
 			pid = (pid + 1) % NPROCS;
@@ -241,6 +245,24 @@ schedule(void)
 			}
 		}
 
+	}
+	else if (scheduling_algorithm == 41)
+	{
+		while (1)
+		{
+			for (j = 0; j < NPROCS; j++)
+			{
+				if (proc_array[j].p_state == P_RUNNABLE && proc_array[j].p_priority 	< lowest_priority)
+				lowest_priority = proc_array[j].p_priority;
+			}
+						pid = (pid + 1) % NPROCS;
+
+			// Run the selected process, but skip
+			// non-runnable processes.
+			// Note that the 'run' function does not return.
+			if (proc_array[pid].p_state == P_RUNNABLE && proc_array[pid].p_priority <= lowest_priority)
+				run(&proc_array[pid]);//run(&proc_array[pid]);
+		}
 	}
 	// If we get here, we are running an unknown scheduling algorithm.
 	cursorpos = console_printf(cursorpos, 0x100, "\nUnknown scheduling algorithm %d\n", scheduling_algorithm);

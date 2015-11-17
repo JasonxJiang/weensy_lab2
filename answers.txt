@@ -59,8 +59,16 @@ Process 4 starts at 921 and ends at 1280
 
 
 Exercise 4:
-s
+
 Did you complete Exercise 4A, Exercise 4B, or both for extra credit?
+4A Implementation 
+Define int field p_priority in process struct to store priority level of the process
+Implement a system call sys_priority() that takes a parameter of priority level and store it in the eax register of the process.
+Define the interrupt case for INT_PRIORITY_SET where process p_priority field is set to the passed in priority level.
+
+To implement the priority algorithm,
+Look for the lowest priority level in all the processes
+Run the round robin algorithm from scheduling algorithm 0 to allowing alternation between process only with the condition that the process must also be equal to or lower than the current lowest priority level.
 
 
 Exercise 5:

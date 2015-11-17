@@ -61,7 +61,7 @@ sys_exit(int status)
     loop: goto loop; // Convince GCC that function truly does not return.
 }
 
-#endif
+
 
 
 /*****************************************************************************
@@ -70,7 +70,14 @@ sys_exit(int status)
  *   IF YOU IMPLEMENT EXERCISE 4.A, NAME YOUR SYSTEM CALL sys_priority .
  *
  *****************************************************************************/
-
+static inline void
+sys_priority(int priority_level)
+{
+	asm volatile("int %0\n"
+		   : : "i" (INT_PRIORITY_SET),
+		   "a" (priority_level)
+		   : "cc", "memory");
+}
 
 /*****************************************************************************
  * sys_share(???)
@@ -94,3 +101,4 @@ sys_print(int print)
 		    : "cc", "memory");
 }
 
+#endif
