@@ -72,7 +72,9 @@ not able to print out a 4.
 
 
 (Exercise 6 is a coding exercise)
-
+To fix the race condition I implemented my own system call in schedos-app.h sys_print(int print).
+The system call prints out the character which I pass in as a parameter that the process was supposed to print into the eax registerand cannot be interrupted by the clock.
+I then defined the interrupt case INT_SYS_USER1 to print out the character and to increment the position of the cursor.
 
 Anything else you'd like us to know:
 

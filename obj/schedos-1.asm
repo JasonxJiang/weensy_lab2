@@ -11,47 +11,27 @@ Disassembly of section .text:
 void
 start(void)
 {
-  200000:	31 c0                	xor    %eax,%eax
-	int i;
-
-	for (i = 0; i < RUNCOUNT; i++) {
-		// Write characters to the console, yielding after each one.
-		*cursorpos++ = PRINTCHAR;
-  200002:	8b 15 00 80 19 00    	mov    0x198000,%edx
-void
-start(void)
+  200000:	31 d2                	xor    %edx,%edx
+ *
+ *****************************************************************************/
+static inline void 
+sys_print(int print)
 {
+	asm volatile("int %0\n"
+  200002:	b8 31 0c 00 00       	mov    $0xc31,%eax
+  200007:	cd 32                	int    $0x32
 	int i;
 
 	for (i = 0; i < RUNCOUNT; i++) {
-  200008:	40                   	inc    %eax
-		// Write characters to the console, yielding after each one.
-		*cursorpos++ = PRINTCHAR;
-  200009:	66 c7 02 31 0c       	movw   $0xc31,(%edx)
-  20000e:	83 c2 02             	add    $0x2,%edx
-void
-start(void)
-{
-	int i;
-
-	for (i = 0; i < RUNCOUNT; i++) {
-  200011:	3d 40 01 00 00       	cmp    $0x140,%eax
-		// Write characters to the console, yielding after each one.
-		*cursorpos++ = PRINTCHAR;
-  200016:	89 15 00 80 19 00    	mov    %edx,0x198000
-void
-start(void)
-{
-	int i;
-
-	for (i = 0; i < RUNCOUNT; i++) {
-  20001c:	75 e4                	jne    200002 <start+0x2>
+  200009:	42                   	inc    %edx
+  20000a:	81 fa 40 01 00 00    	cmp    $0x140,%edx
+  200010:	75 f5                	jne    200007 <start+0x7>
 	// the kernel can look up that register value to read the argument.
 	// Here, the status is loaded into register %eax.
 	// You can load other registers with similar syntax; specifically:
 	//	"a" = %eax, "b" = %ebx, "c" = %ecx, "d" = %edx,
 	//	"S" = %esi, "D" = %edi.
 	asm volatile("int %0\n"
-  20001e:	66 31 c0             	xor    %ax,%ax
-  200021:	cd 31                	int    $0x31
-  200023:	eb fe                	jmp    200023 <start+0x23>
+  200012:	31 c0                	xor    %eax,%eax
+  200014:	cd 31                	int    $0x31
+  200016:	eb fe                	jmp    200016 <start+0x16>

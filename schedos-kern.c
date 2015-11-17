@@ -88,7 +88,7 @@ start(void)
 
 	// Set up hardware (schedos-x86.c)
 	segments_init();
-	interrupt_controller_init(0);
+	interrupt_controller_init(1);
 	console_clear();
 
 	// Initialize process descriptors as empty
@@ -180,6 +180,7 @@ interrupt(registers_t *reg)
 		// 'sys_user*' are provided for your convenience, in case you
 		// want to add a system call.
 		/* Your code here (if you want). */
+		*cursorpos++ = reg->reg_eax;
 		run(current);
 
 	case INT_SYS_USER2:
@@ -227,7 +228,7 @@ schedule(void)
 			// non-runnable processes.
 			// Note that the 'run' function does not return.
 			if (proc_array[pid].p_state == P_RUNNABLE)
-				run(&proc_array[pid]);
+				run(&proc_array[pid]);//run(&proc_array[pid]);
 		}
 	else if (scheduling_algorithm == 2)
 	{	
