@@ -230,12 +230,16 @@ schedule(void)
 				run(&proc_array[pid]);
 		}
 	else if (scheduling_algorithm == 2)
-	{
-		for (j = 1; j<NPROCS; j++)
+	{	
+		while (1)
 		{
-			if (proc_array[j].p_state == P_RUNNABLE)
-				run(&proc_array[j]);
+			for (j = 1; j<NPROCS; j++)
+			{
+				if (proc_array[j].p_state == P_RUNNABLE)
+					run(&proc_array[j]);
+			}
 		}
+
 	}
 	// If we get here, we are running an unknown scheduling algorithm.
 	cursorpos = console_printf(cursorpos, 0x100, "\nUnknown scheduling algorithm %d\n", scheduling_algorithm);

@@ -39,6 +39,5 @@ start(void)
 		//sys_yield(); //changed for exercise 2
 	}
 
-	// Yield forever.
 	sys_exit(0);
 }
