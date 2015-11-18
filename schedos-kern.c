@@ -2,6 +2,7 @@
 #include "x86.h"
 #include "lib.h"
 
+
 /*****************************************************************************
  * schedos-kern
  *
@@ -95,6 +96,7 @@ start(void)
 	memset(proc_array, 0, sizeof(proc_array));
 	for (i = 0; i < NPROCS; i++) {
 		proc_array[i].p_pid = i;
+		proc_array[i].p_ticket = i;
 		proc_array[i].p_state = P_EMPTY;
 		//proc_array[i].p_times_run = 0;
 	}
@@ -142,7 +144,7 @@ start(void)
 	//   41 = p_priority algorithm (exercise 4.a)
 	//   42 = p_share algorithm (exercise 4.b)
 	//    7 = any algorithm that you may implement for exercise 7
-	scheduling_algorithm = 3;
+	scheduling_algorithm = 4;
 
 	// Switch to the first process.
 	run(&proc_array[1]);
@@ -209,6 +211,10 @@ interrupt(registers_t *reg)
 	case INT_PRIORITY_SHARE:
 		current->p_share = reg->reg_eax;
 		run(current);
+	
+	case INT_LOTTERY_TICKET_SET:
+		current->p_ticket = reg->reg_eax;
+		run(current);
 		
 	case INT_CLOCK:
 		// A clock interrupt occurred (so an application exhausted its
@@ -237,6 +243,16 @@ interrupt(registers_t *reg)
  *   set you will provide at least one more.
  *
  *****************************************************************************/
+static unsigned long next = 1;
+/* RAND_MAX assumed to be 32767 */
+int myrand(void) {
+    next = next * 1103515245 + 12345;
+    return((unsigned)(next/65536) % 32768);
+}
+void mysrand(unsigned seed) {
+    next = seed;
+}
+
 
 void
 schedule(void)
@@ -299,6 +315,19 @@ schedule(void)
 				}
 			}
 			pid = (pid + 1)%NPROCS;
+		}
+	}
+	else if (scheduling_algorithm == 4) //used for lottery scheduling 
+	{
+		mysrand(82);
+		
+		while (1)
+		{
+			//int random_num = myrand();
+			int curr_ticket = (myrand() %4) + 1;
+			if (proc_array[pid].p_ticket == curr_ticket && 						proc_array[pid].p_state == P_RUNNABLE)
+				run(&proc_array[pid]);
+			pid = (pid + 1) % NPROCS;
 		}
 	}
 	// If we get here, we are running an unknown scheduling algorithm.

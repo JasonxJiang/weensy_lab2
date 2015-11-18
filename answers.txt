@@ -61,6 +61,8 @@ Process 4 starts at 921 and ends at 1280
 Exercise 4:
 
 Did you complete Exercise 4A, Exercise 4B, or both for extra credit?
+I did both exercise 4A and 4B for extra credit 
+
 4A Implementation 
 Define int field p_priority in process struct to store priority level of the process
 Implement a system call sys_priority() that takes a parameter of priority level and store it in the eax register of the process.
@@ -70,6 +72,13 @@ To implement the priority algorithm,
 Look for the lowest priority level in all the processes
 Run the round robin algorithm from scheduling algorithm 0 to allowing alternation between process only with the condition that the process must also be equal to or lower than the current lowest priority level.
 
+4B Implementation
+I defined the int fields p_share in the process struct to store the share of running time that each process has. I also added in the field p_times_run that kept a count of when the process was allowed to run.
+I also implemented a system call sys_share() that takes a parameter of a priority share and store it in the eax register of the process.
+Define the interrupt case for INT_PRIORITY_SHARE where p p_share field is set to the passed in priority share value from the system call.
+
+To implement the proporitional share algorithm
+I checked the p_times_run field of the process. If it was lower than its p_share I would run the process. If the p_times_run was greater or equal to its p_share I would reset its value to 0 but not run it in that iteration. I would run this logic over every process that ran.
 
 Exercise 5:
 The first known interrupt occurs on process 4. This is seen since we see that the printing
@@ -89,3 +98,12 @@ Anything else you'd like us to know:
 
 
 Extra credit exercises:
+
+Exercise 7:
+I implemented a lottery scheduling algorithm (labeld 4 for the scheduling algorithm)
+To do this, I added a field to the process struct that represented the ticket the process head. 
+I also implemented a system call that would take an int as a parameter and store the ticket in the eax register of the process.
+I defined the interrupt case for INT_LOTTERY_TICKET_SET where the p_ticket field is set to the passed in ticket from the system call.
+
+To implement the lottery scheduling algorithm, I created my own functions mysrand(int seed) and rand(). 
+srand(int) would set a seed that the function rand would use to generate a random int. I used this random int to determine what ticket would be serviced in my scheduling algorithm. Only the ticket with the matching number in that iteration would be run.

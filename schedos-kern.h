@@ -33,6 +33,7 @@ typedef struct process {
 	int p_priority;			// Process's priority for exercise 4A
 	int p_share; 			// Process's share for exercise 4B
 	int p_times_run; //= 0;		// Process's times allowed to run for exercise 4B
+	int p_ticket;			// Process's ticket used for exercsie 7
 	//int p_process_type;		//tells if it prints out 1,2,3,4
 	//char 
 } process_t;

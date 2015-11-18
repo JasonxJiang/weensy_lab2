@@ -94,6 +94,12 @@ sys_share(int priority_share)
 		   : "cc", "memory");
 }
 
+/*****************************************************************************
+ * sys_print(???)
+ *
+ *   IF YOU IMPLEMENT EXERCISE 6, NAME YOUR SYSTEM CALL sys_print .
+ *
+ *****************************************************************************/
 static inline void 
 sys_print(int print)
 {
@@ -102,5 +108,18 @@ sys_print(int print)
 		    "a" (print)
 		    : "cc", "memory");
 }
-
+/*****************************************************************************
+ * sys_ticket(???)
+ *
+ *   IF YOU IMPLEMENT EXERCISE 7, NAME YOUR SYSTEM CALL sys_ticket .
+ *
+ *****************************************************************************/
+static inline void
+sys_ticket(int ticket)
+{
+		asm volatile("int %0\n"
+		    : : "i" (INT_LOTTERY_TICKET_SET),
+		    "a" (ticket)
+		    : "cc", "memory");
+}
 #endif

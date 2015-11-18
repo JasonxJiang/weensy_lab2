@@ -18,6 +18,7 @@
 #define INT_SYS_USER2		51
 #define INT_PRIORITY_SET	52
 #define INT_PRIORITY_SHARE 	53
+#define INT_LOTTERY_TICKET_SET	54
 
 
 // The current screen cursor position (stored at memory location 0x198000).
