@@ -52,18 +52,18 @@ int scheduling_algorithm;
 // UNCOMMENT THESE LINES IF YOU DO EXERCISE 4.A
 // Use these #defines to initialize your implementation.
 // Changing one of these lines should change the initialization.
-// #define __PRIORITY_1__ 1
-// #define __PRIORITY_2__ 2
-// #define __PRIORITY_3__ 3
-// #define __PRIORITY_4__ 4
+ #define __PRIORITY_1__ 1
+ #define __PRIORITY_2__ 2
+ #define __PRIORITY_3__ 3
+ #define __PRIORITY_4__ 4
 
 // UNCOMMENT THESE LINES IF YOU DO EXERCISE 4.B
 // Use these #defines to initialize your implementation.
 // Changing one of these lines should change the initialization.
-// #define __SHARE_1__ 1
-// #define __SHARE_2__ 2
-// #define __SHARE_3__ 3
-// #define __SHARE_4__ 4
+ #define __SHARE_1__ 1
+ #define __SHARE_2__ 2
+ #define __SHARE_3__ 3
+ #define __SHARE_4__ 4
 
 // USE THESE VALUES FOR SETTING THE scheduling_algorithm VARIABLE.
 #define __EXERCISE_1__   0  // the initial algorithm
@@ -88,7 +88,7 @@ start(void)
 
 	// Set up hardware (schedos-x86.c)
 	segments_init();
-	interrupt_controller_init(1);
+	interrupt_controller_init(0);
 	console_clear();
 
 	// Initialize process descriptors as empty
@@ -96,8 +96,19 @@ start(void)
 	for (i = 0; i < NPROCS; i++) {
 		proc_array[i].p_pid = i;
 		proc_array[i].p_state = P_EMPTY;
+		//proc_array[i].p_times_run = 0;
 	}
+	proc_array[1].p_share = 4;
+	proc_array[2].p_share = 3;
+	proc_array[3].p_share = 2;
+	proc_array[4].p_share = 5;
+	proc_array[1].p_times_run = 1;//first process run initially in this function
+	proc_array[2].p_times_run = 0;
+	proc_array[3].p_times_run = 0;
+	proc_array[4].p_times_run = 0;
+	
 
+	
 	// Set up process descriptors (the proc_array[])
 	for (i = 1; i < NPROCS; i++) {
 		process_t *proc = &proc_array[i];
@@ -115,6 +126,10 @@ start(void)
 		// Mark the process as runnable!
 		proc->p_state = P_RUNNABLE;
 	}
+	proc_array[1].p_priority = 16;
+	proc_array[2].p_priority = 12;
+	proc_array[3].p_priority = 60;	
+	proc_array[4].p_priority = 10;
 
 	// Initialize the cursor-position shared variable to point to the
 	// console's first character (the upper left).
@@ -127,7 +142,7 @@ start(void)
 	//   41 = p_priority algorithm (exercise 4.a)
 	//   42 = p_share algorithm (exercise 4.b)
 	//    7 = any algorithm that you may implement for exercise 7
-	scheduling_algorithm = 41;
+	scheduling_algorithm = 3;
 
 	// Switch to the first process.
 	run(&proc_array[1]);
@@ -190,6 +205,11 @@ interrupt(registers_t *reg)
 	case INT_PRIORITY_SET:
 		current->p_priority = reg->reg_eax;
 		run(current);
+	
+	case INT_PRIORITY_SHARE:
+		current->p_share = reg->reg_eax;
+		run(current);
+		
 	case INT_CLOCK:
 		// A clock interrupt occurred (so an application exhausted its
 		// time quantum).
@@ -224,6 +244,7 @@ schedule(void)
 	pid_t pid = current->p_pid;
 	int j = 0;
 	int lowest_priority = 65535; //INT_MAX of 16 bit ints 
+	int largest_share = 0;
 	if (scheduling_algorithm == 0)
 		while (1) {
 			pid = (pid + 1) % NPROCS;
@@ -234,7 +255,7 @@ schedule(void)
 			if (proc_array[pid].p_state == P_RUNNABLE)
 				run(&proc_array[pid]);//run(&proc_array[pid]);
 		}
-	else if (scheduling_algorithm == 2)
+	else if (scheduling_algorithm == 1)
 	{	
 		while (1)
 		{
@@ -246,22 +267,38 @@ schedule(void)
 		}
 
 	}
-	else if (scheduling_algorithm == 41)
+	else if (scheduling_algorithm == 2)
 	{
 		while (1)
 		{
-			for (j = 0; j < NPROCS; j++)
+			for (j = 1; j < NPROCS; j++)
 			{
-				if (proc_array[j].p_state == P_RUNNABLE && proc_array[j].p_priority 	< lowest_priority)
-				lowest_priority = proc_array[j].p_priority;
+				if (proc_array[j].p_state == P_RUNNABLE && proc_array[j].p_priority < lowest_priority)
+					lowest_priority = proc_array[j].p_priority;
 			}
-						pid = (pid + 1) % NPROCS;
 
-			// Run the selected process, but skip
-			// non-runnable processes.
-			// Note that the 'run' function does not return.
+			pid = (pid + 1) % NPROCS;
 			if (proc_array[pid].p_state == P_RUNNABLE && proc_array[pid].p_priority <= lowest_priority)
-				run(&proc_array[pid]);//run(&proc_array[pid]);
+				run(&proc_array[pid]);
+			lowest_priority = 65535;
+			
+		}
+	}
+	else if (scheduling_algorithm == 3)
+	{
+		while (1)
+		{
+			if (proc_array[pid].p_state == P_RUNNABLE)
+			{
+				if (proc_array[pid].p_times_run >= proc_array[pid].p_share)
+					proc_array[pid].p_times_run = 0;
+				else
+				{
+					proc_array[pid].p_times_run++;
+					run(&proc_array[pid]);
+				}
+			}
+			pid = (pid + 1)%NPROCS;
 		}
 	}
 	// If we get here, we are running an unknown scheduling algorithm.

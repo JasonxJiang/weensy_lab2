@@ -30,14 +30,16 @@ typedef struct process {
 
 	procstate_t p_state;		// Process state; see above
 	int p_exit_status;		// Process's exit status
-	int p_priority;			//Process's priority for exercise 4A
+	int p_priority;			// Process's priority for exercise 4A
+	int p_share; 			// Process's share for exercise 4B
+	int p_times_run; //= 0;		// Process's times allowed to run for exercise 4B
 	//int p_process_type;		//tells if it prints out 1,2,3,4
 	//char 
 } process_t;
 
 
 // Clock frequency: the clock interrupt, if any, happens HZ times a second
-#define HZ			1000
+#define HZ			100
 
 // The interrupt number corresponding to the first hardware interrupt
 #define INT_HARDWARE		32
