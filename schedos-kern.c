@@ -100,14 +100,14 @@ start(void)
 		proc_array[i].p_state = P_EMPTY;
 		//proc_array[i].p_times_run = 0;
 	}
-	proc_array[1].p_share = 4;
+	/*proc_array[1].p_share = 4;
 	proc_array[2].p_share = 3;
 	proc_array[3].p_share = 2;
 	proc_array[4].p_share = 5;
 	proc_array[1].p_times_run = 1;//first process run initially in this function
 	proc_array[2].p_times_run = 0;
 	proc_array[3].p_times_run = 0;
-	proc_array[4].p_times_run = 0;
+	proc_array[4].p_times_run = 0;*/
 	
 
 	
@@ -128,11 +128,11 @@ start(void)
 		// Mark the process as runnable!
 		proc->p_state = P_RUNNABLE;
 	}
-	proc_array[1].p_priority = 16;
+	/*proc_array[1].p_priority = 16;
 	proc_array[2].p_priority = 12;
 	proc_array[3].p_priority = 60;	
 	proc_array[4].p_priority = 10;
-
+*/
 	// Initialize the cursor-position shared variable to point to the
 	// console's first character (the upper left).
 	cursorpos = (uint16_t *) 0xB8000;
@@ -144,7 +144,7 @@ start(void)
 	//   41 = p_priority algorithm (exercise 4.a)
 	//   42 = p_share algorithm (exercise 4.b)
 	//    7 = any algorithm that you may implement for exercise 7
-	scheduling_algorithm = 4;
+	scheduling_algorithm = 3;
 
 	// Switch to the first process.
 	run(&proc_array[1]);

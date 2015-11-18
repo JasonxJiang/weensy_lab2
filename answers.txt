@@ -9,6 +9,7 @@ Response to Exercise 1:
 
 The name of the scheduling algorithm is:
 Non premptive scheduling algorithm.
+Also according to the TA this is also an example of round robin scheduling algorithm.
 
 (Exercise 2 is a coding exercise)
 
@@ -107,3 +108,10 @@ I defined the interrupt case for INT_LOTTERY_TICKET_SET where the p_ticket field
 
 To implement the lottery scheduling algorithm, I created my own functions mysrand(int seed) and rand(). 
 srand(int) would set a seed that the function rand would use to generate a random int. I used this random int to determine what ticket would be serviced in my scheduling algorithm. Only the ticket with the matching number in that iteration would be run.
+
+
+Exercise 8:
+I implemented another synchronizing mechanism for printing characters by define another variable called mutex wihin the shared memory. I added this new variable to 'schedos.h' similar to how curposs was added. Afterwards I also defined a memory location for this shared mutex variable in 'schedos-symbols.ld'. 
+
+In order to employ this lock, you call the atomic_swap function given in x86sync.h and pass in the shared variable mutex.
+
